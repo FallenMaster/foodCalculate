@@ -45,6 +45,7 @@ main {
 .foodlist li.collection-item,
 .foodlist li div:nth-child(2) li.collection-item {
    padding-left: 15px;
+   cursor: move;
 }
 
 li.collection-item {
