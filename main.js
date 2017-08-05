@@ -7,6 +7,9 @@ class App {
    constructor() {
       this.data = foodlist.food;
       this._initEvents();
+      this.choiceList = [];
+      this.ingridienList = {};
+      this.numberOfItems = 0;
    }
 
    _initEvents() {
@@ -99,6 +102,8 @@ class App {
             },
             onAdd: function (event) {
                if (!!event.from.className.indexOf('meal')) {
+                  event.item.setAttribute('id', that.numberOfItems);
+                  that.numberOfItems++;
                   that._onDragStop(event);
                }
             }
@@ -117,41 +122,36 @@ class App {
    _onDragStop(event, ui) {
       let
          targetId = event.item.dataset.id,
-         targetMenu = this.data[targetId].ingridients,
-         ingridients = $('.hiddenlist').text(),
-         numberOfPeople = $('#people').val(),
-         output = {};
+         numberOfPeople = $('#people').val();
 
-      if (ingridients != '') {
-         output = JSON.parse( ingridients );
-      }
-
-      $('.hiddenlist').text( JSON.stringify( this.combine(targetMenu, output) ) );
-
+      this.data[targetId].numberOfPeople = numberOfPeople;
+      this.choiceList.push(this.data[targetId]);
+      this.ingridienList = this.combine(this.choiceList[this.numberOfItems-1], this.ingridienList)
       $('.productlist').empty();
-      $.each( this.combine(targetMenu, output), function( key, value ) {
-        $('.productlist').append( key + ': ' + value * numberOfPeople + '<br />' );
+      $.each(this.ingridienList, function(key, value) {
+         $('.productlist').append( key + ': ' + value + '<br />' );
       });
    }
 
    // Складываем ингридиенты двух блюд
+
    combine(object1, object2) {
       let
          menu = {},
          key;
 
-      for(key in object1){
+      for(key in object1.ingridients){
          if(object2[key] == undefined){
-            menu[key] = object1[key];
+            menu[key] = object1.ingridients[key] * object1.numberOfPeople;
          } else {
-            menu[key] = parseFloat(object1[key]) + parseFloat(object2[key]);
+            menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
          };
       };
       for(key in object2){
-         if(object1[key] == undefined){
+         if(object1.ingridients[key] == undefined){
             menu[key] = object2[key];
          } else {
-            menu[key] = parseFloat(object1[key]) + parseFloat(object2[key]);
+            menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
          };
       };
 
