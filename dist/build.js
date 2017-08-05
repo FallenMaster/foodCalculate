@@ -294,7 +294,9 @@ class App {
                revertClone: false
             },
             onAdd: function (event) {
-               that._onDragStop(event);
+               if (!!event.from.className.indexOf('meal')) {
+                  that._onDragStop(event);
+               }
             }
          },
          numberOfDays = $('#days').val();
