@@ -148,10 +148,18 @@ let foodlist = {
 
          // Напитки
          {
-            'name': 'Чай',
+            'name': 'Чай рассыпной',
             'type': 'drink',
             'ingridients': {
                'чай листовой': 5,
+               'сахар': 20
+            }
+         },
+         {
+            'name': 'Чай пакетированный',
+            'type': 'drink',
+            'ingridients': {
+               'пакетик чая': 1,
                'сахар': 20
             }
          },
@@ -219,12 +227,16 @@ class App {
          that._renderDays();
          that._sortable();
       });
+      $('.deleteButton').on('click', function() {
+         that._deleteItem(event);
+      });
+
    }
 
    // Выводим список всех блюд
    _renderFoodList() {
       this.data.forEach(function(item, i, allFoodList) {
-         $( '.' + item.type ).append( `<li data-id="` + i + `" class="collection-item grey-text text-darken-4">` + item.name + `</li>` );
+         $('.' + item.type).append(`<li data-id="` + i + `" class="collection-item grey-text text-darken-4">` + item.name + `<span class="deleteButton">x</span></li>`);
       });
    }
 
@@ -318,40 +330,85 @@ class App {
    _onDragStop(event, ui) {
       let
          targetId = event.item.dataset.id,
-         numberOfPeople = $('#people').val();
+         numberOfPeople = $('#people').val(),
+         newItem = $.extend(true, {}, this.data[targetId]);
 
-      this.data[targetId].numberOfPeople = numberOfPeople;
-      this.choiceList.push(this.data[targetId]);
-      this.ingridienList = this.combine(this.choiceList[this.numberOfItems-1], this.ingridienList)
+      newItem.id = Number(event.item.id);
+      newItem.numberOfPeople = numberOfPeople;
+      this.choiceList.push(newItem);
+
+      this.ingridienList = this.combine(newItem, this.ingridienList);
       $('.productlist').empty();
       $.each(this.ingridienList, function(key, value) {
-         $('.productlist').append( key + ': ' + value + '<br />' );
+         $('.productlist').append(key + ': ' + value + '<br />');
+      });
+   }
+
+
+   _deleteItem(event) {
+      let deletedItemId = event.target.parentNode.attributes.id.value;
+      for (let i = 0; i < this.choiceList.length; i++) {
+      	if (this.choiceList[i].id === Number(deletedItemId)) {
+            event.target.parentElement.remove()
+            this.deleteIngridientsFromList(this.choiceList[i], this.ingridienList);
+      		this.choiceList.splice(i, 1);
+      	}
+      }
+
+      $('.productlist').empty();
+      $.each(this.ingridienList, function(key, value) {
+         $('.productlist').append(key + ': ' + value + '<br />');
       });
    }
 
    // Складываем ингридиенты двух блюд
-
    combine(object1, object2) {
       let
          menu = {},
          key;
 
-      for(key in object1.ingridients){
-         if(object2[key] == undefined){
-            menu[key] = object1.ingridients[key] * object1.numberOfPeople;
-         } else {
-            menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
+      if (object1 !== undefined) {
+         for(key in object1.ingridients) {
+            if(object2[key] == undefined){
+               menu[key] = object1.ingridients[key] * object1.numberOfPeople;
+            } else {
+               menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
+            };
          };
-      };
-      for(key in object2){
-         if(object1.ingridients[key] == undefined){
-            menu[key] = object2[key];
-         } else {
-            menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
+         for(key in object2) {
+            if(object1.ingridients[key] == undefined){
+               menu[key] = object2[key];
+            } else {
+               menu[key] = parseFloat(object1.ingridients[key] * object1.numberOfPeople) + parseFloat(object2[key]);
+            };
          };
-      };
+      } else {
+         menu = {};
+      }
 
       return menu;
+   }
+
+   // Удаляем ингридиенты из списка
+   deleteIngridientsFromList(object1, allIngridients) {
+      var numberOfPeople = object1.numberOfPeople;
+
+      $.each(object1.ingridients, function(index, value) {
+          $.each(allIngridients, function(index1, value1) {
+          	if(index == index1) {
+               // debugger;
+      			allIngridients[index1] = value1 - value * numberOfPeople;
+               if (allIngridients[index1] == 0) {
+                  delete allIngridients[index1];
+               }
+      		}
+      	});
+      });
+
+      $('.productlist').empty();
+      $.each(this.ingridienList, function(key, value) {
+         $('.productlist').append(key + ': ' + value + '<br />');
+      });
    }
 
 }

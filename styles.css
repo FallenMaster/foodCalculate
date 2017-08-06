@@ -58,6 +58,23 @@ li.collection-item:hover {
 .collection .collection-item.active {
    color: inherit;
 }
+li.collection-item .deleteButton {
+   display: none;
+   font-size: 10px;
+   font-weight: bold;
+   background-color: #c5e1a5;
+   line-height: 18px;
+   padding: 0px 6px;
+   margin-top: 4px;
+}
+.tourDay li.collection-item:hover .deleteButton {
+   display: block;
+   /*padding: 3px;*/
+   float: right;
+}
+.tourDay li.collection-item .deleteButton:hover {
+   background-color: #8bc34a;
+}
 
 .input-field {
    width: 100px;
