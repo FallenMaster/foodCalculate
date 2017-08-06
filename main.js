@@ -45,7 +45,11 @@ class App {
       function dayContent(number) {
          return `
          <li class="tourDay day`+ number + `">
-            <div class="dayMainTitle light-green lighten-3 collapsible-header active">День ` + number + `</div>
+            <div class="dayMainTitle light-green lighten-3 collapsible-header active">
+               <i class="material-icons keyboard_arrow_right">keyboard_arrow_right</i>
+               <i class="material-icons keyboard_arrow_down">keyboard_arrow_down</i>
+               День ` + number + `
+            </div>
             <div class="collapsible-body">
                <div class="daySubTitle">Завтрак</div>
                <ul class="meal meal1"></ul>
@@ -192,7 +196,6 @@ class App {
       $.each(object1.ingridients, function(index, value) {
           $.each(allIngridients, function(index1, value1) {
           	if(index == index1) {
-               // debugger;
       			allIngridients[index1] = value1 - value * numberOfPeople;
                if (allIngridients[index1] == 0) {
                   delete allIngridients[index1];

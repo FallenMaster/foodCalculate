@@ -6,6 +6,22 @@ main {
 }
 .foodlist li .collapsible-header {
    font-weight: bold;
+   border-bottom: 1px solid #d5e4c3 !important;
+}
+
+.keyboard_arrow_right, .keyboard_arrow_down {
+   font-size: 16px !important;
+   margin-right: 0px !important;
+   margin-left: -10px;
+}
+.collapsible-header.active .keyboard_arrow_right {
+   display: none;
+}
+.collapsible-header.active .keyboard_arrow_down {
+   display: block;
+}
+.collapsible-header .keyboard_arrow_down {
+   display: none;
 }
 
 .choicelist {
